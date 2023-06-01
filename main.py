@@ -178,5 +178,6 @@ y_test_pred = best_model.predict(X_test_full)
 y_test_pred = y_test_pred.astype(bool)
 
 # Export predictions to csv
-submission_df = pd.DataFrame({"PassengerId": X_test_full.index, "Transported": y_test_pred})
-submission_df.to_csv("Submission.csv", index=False)
+submission_df = pd.DataFrame({"PassengerId": X_test_full.index.astype(str), "Transported": y_test_pred})
+print(submission_df.info())
+submission_df.to_csv("submission.csv", index=False)
