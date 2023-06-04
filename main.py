@@ -72,6 +72,19 @@ print(X_test_full.isnull().sum())
 
 # Step 2b: Data Preprocessing - encoding categorical variables
 
+# Split Cabin column into deck/num/side
+X_train[["Deck", "Num", "Side"]] = X_train["Cabin"].str.split("/", expand=True)
+X_valid[["Deck", "Num", "Side"]] = X_valid["Cabin"].str.split("/", expand=True)
+X_test_full[["Deck", "Num", "Side"]] = X_test_full["Cabin"].str.split("/", expand=True)
+
+# Drop Cabin column
+X_train.drop("Cabin", axis=1, inplace=True)
+X_valid.drop("Cabin", axis=1, inplace=True)
+X_test_full.drop("Cabin", axis=1, inplace=True)
+
+# As we have dropped Cabin column, reevaluate categorical columns
+categorical_cols = [col for col in X_train.columns if X_train[col].dtype == "object"]
+
 # Assess cardinality of categorical columns
 cardinality = X_train[categorical_cols].nunique()
 low_cardinality_cols = [col for col in X_train[categorical_cols] if X_train[col].nunique() < 10]
@@ -109,10 +122,10 @@ X_train.columns = X_train.columns.astype(str)
 X_valid.columns = X_valid.columns.astype(str)
 X_test_full.columns = X_test_full.columns.astype(str)
 
-
 # Step 3: Model selection
 
-"""# Define grid search range
+"""
+# Define grid search range
 param_grid = {
     "max_depth": [3, 5, 7],
     "n_estimators": [100, 200, 300],
@@ -131,7 +144,9 @@ best_params = grid_search.best_params_
 best_score = grid_search.best_score_
 
 print("Best Parameters:", best_params)
-print("Best Score:", best_score)"""
+print("Best Score:", best_score)
+
+"""
 
 # Fit the model with best grid search parameters
 best_model = XGBClassifier(max_depth=3, learning_rate=0.1, n_estimators=200, n_jobs=6)
